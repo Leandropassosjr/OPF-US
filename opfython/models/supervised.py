@@ -118,7 +118,7 @@ class SupervisedOPF(OPF):
 
         logger.debug(f'Prototypes: {prototypes}.')
 
-    def fit(self, X_train, Y_train):
+    def fit(self, X_train, Y_train, idx_train):
         """Fits data in the classifier.
 
         Args:
@@ -133,7 +133,7 @@ class SupervisedOPF(OPF):
         start = time.time()
 
         # Creating a subgraph
-        self.subgraph = Subgraph(X_train, Y_train)
+        self.subgraph = Subgraph(X_train, Y_train, idx_train)
 
         # Checks if it is supposed to use pre-computed distances
         if self.pre_computed_distance:
@@ -283,6 +283,10 @@ class SupervisedOPF(OPF):
             # The current label will be `k` node's predicted label
             current_label = self.subgraph.nodes[k].predicted_label
 
+
+            # The current conquerer will be `k` node's sample's index
+            current_conqueror = self.subgraph.nodes[k].idx_sample
+
             # While `j` is a possible node and the minimum cost is bigger than the current node's cost
             while j < (self.subgraph.n_nodes - 1) and min_cost > self.subgraph.nodes[self.subgraph.idx_nodes[j+1]].cost:
                 # Gathers the next node from the ordered list
@@ -313,6 +317,9 @@ class SupervisedOPF(OPF):
 
                     # Updates the current label as `l` node's predicted label
                     current_label = self.subgraph.nodes[l].predicted_label
+					
+					# Updates the current conquerer as `l` node's sample's index
+                    current_conqueror = self.subgraph.nodes[l].idx_sample
 
                 # Increments the `j` counter
                 j += 1
@@ -323,6 +330,9 @@ class SupervisedOPF(OPF):
             # Node's `i` predicted label is the same as current label
             pred_subgraph.nodes[i].predicted_label = current_label
 
+            # Node's `i` predicted label is the same as current label
+            pred_subgraph.nodes[i]._idx_sample_conqueror = current_conqueror
+
             # Checks if any node has been conquered
             if conqueror > -1:
                 # Marks the conqueror node and its path
@@ -330,6 +340,7 @@ class SupervisedOPF(OPF):
 
         # Creating the list of predictions
         preds = [pred.predicted_label for pred in pred_subgraph.nodes]
+        conqs = [pred._idx_sample_conqueror for pred in pred_subgraph.nodes]
 
         # Ending timer
         end = time.time()
@@ -340,7 +351,7 @@ class SupervisedOPF(OPF):
         logger.info('Data has been predicted.')
         logger.info(f'Prediction time: {predict_time} seconds.')
 
-        return preds
+        return preds, conqs 
 
     def learn(self, X_train, Y_train, X_val, Y_val, n_iterations=10):
         """Learns the best classifier over a validation set.

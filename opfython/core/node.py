@@ -12,7 +12,7 @@ class Node:
 
     """
 
-    def __init__(self, idx=0, label=1, features=[]):
+    def __init__(self, idx=0, label=1, idx_sample=0, features=[]):
         """Initialization method.
 
         Args:
@@ -24,6 +24,9 @@ class Node:
 
         # Initially, we need to set the node's index
         self.idx = idx
+
+		# As well as the sample's unique index
+        self.idx_sample = idx_sample
 
         # We also need to set its label (true label)
         self.label = label
@@ -64,6 +67,9 @@ class Node:
         # Whether the node is relevant or not
         self.relevant = c.IRRELEVANT
 
+		# For testing samples. Conqueror sample's id
+        self.idx_sample_conqueror = 0
+
     @property
     def idx(self):
         """int: Node's index.
@@ -80,6 +86,23 @@ class Node:
             raise e.ValueError('`idx` should be >= 0')
 
         self._idx = idx
+
+    @property
+    def idx_sample(self):
+        """int: Sample's index.
+
+        """
+
+        return self._idx_sample
+
+    @idx_sample.setter
+    def idx_sample(self, idx_sample):
+        if not isinstance(idx_sample, int):
+            raise e.TypeError('`idx` should be an integer')
+        if idx_sample < 0:
+            raise e.ValueError('`idx_sample` should be >= 0')
+
+        self._idx_sample = idx_sample
 
     @property
     def label(self):
@@ -289,3 +312,21 @@ class Node:
                 '`relevant` should be `RELEVANT` or `IRRELEVANT`')
 
         self._relevant = relevant
+
+    @property
+    def idx_sample_conqueror(self):
+        """int: For testing samples. Conqueror sample's id.
+
+        """
+
+        return self._idx_sample_conqueror
+
+    @idx_sample_conqueror.setter
+    def idx_sample_conqueror(self, idx_sample_conqueror):
+        if not isinstance(idx_sample_conqueror, int):
+            raise e.TypeError('`idx_sample_conqueror` should be an integer')
+        if idx_sample_conqueror < 0:
+            raise e.ValueError('`idx_sample_conqueror` should be >= 0')
+
+        self._idx_sample_conqueror = idx_sample_conqueror
+

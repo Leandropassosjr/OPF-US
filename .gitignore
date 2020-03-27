@@ -126,3 +126,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#Downsampling
+data/*
+Results/*
+Results (copy)/*

@@ -21,11 +21,14 @@ def parse_loader(data):
 
     # Tries to parse the dataframe
     try:
-        # From third columns beyond, we should have the features
-        X = data[:, 2:]
+        # first column should be the index
+        index = data[:, 0]
 
         # Second column should be the label
         Y = data[:, 1]
+
+        # From third columns beyond, we should have the features
+        X = data[:, 2:]
 
         # Calculates the amount of samples per class
         _, counts = np.unique(Y, return_counts=True)
@@ -44,7 +47,7 @@ def parse_loader(data):
 
         logger.info(f'Data parsed.')
 
-        return X, Y.astype(int)
+        return X, Y.astype(int), index.astype(int)
 
     # If dataframe could not be parsed
     except TypeError as error:
