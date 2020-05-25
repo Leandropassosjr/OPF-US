@@ -2,7 +2,7 @@
 **/*.DS_Store
 .vscode/
 
-/Results/*
+/Results/*D
 /ResultsGeneral/*
 /Results_medicine/*
 
