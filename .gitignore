@@ -2,6 +2,11 @@
 **/*.DS_Store
 .vscode/
 
+/Results/*
+/ResultsGeneral/*
+/Results_medicine/*
+
+
 # Ubuntu's editor temp files
 **/*.*~
 

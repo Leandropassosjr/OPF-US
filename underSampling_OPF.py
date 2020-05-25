@@ -10,12 +10,13 @@ import sys
 import os
 
 
-class DS(object):
+class US(object):
 
-	def __init__(self):
+	def __init__(self, path_output):
 		self.opfSup = SupervisedOPF(distance='log_squared_euclidean', pre_computed_distance=None)
+		self.path_output=path_output
 
-	def __classify(self, x_train,y_train, x_valid, y_valid):
+	def __classify(self, x_train,y_train, x_valid, y_valid, minority_class):
 		# Training the OPF                
 		indexes = np.arange(len(x_train))
 		self.opfSup.fit(x_train, y_train,indexes)
@@ -26,21 +27,22 @@ class DS(object):
 		
 		# Validation measures for this k nearest neighbors
 		accuracy = accuracy_score(y_valid, y_pred)
-		recall = recall_score(y_valid, y_pred, pos_label=2) # assuming that 2 is the minority class
-		f1 = f1_score(y_valid, y_pred, pos_label=2)
-		return accuracy, recall, f1
+		recall = recall_score(y_valid, y_pred, pos_label=minority_class) # assuming that 2 is the minority class
+		f1 = f1_score(y_valid, y_pred, pos_label=minority_class)
+		return accuracy, recall, f1, y_pred
 
 
-	def __saveResults(self, X_train,Y_train, X_test, Y_test,  ds,f, approach):
+	def __saveResults(self, X_train,Y_train, X_test, Y_test,  ds,f, approach, minority_class):
 
-		path = 'Results/down_{}/{}/{}'.format(approach,ds,f)
+		path = '{}/down_{}/{}/{}'.format(self.path_output,approach,ds,f)
 		if not os.path.exists(path):
 			os.makedirs(path)
 
 		results_print=[]
-		accuracy, recall, f1 = self.__classify(X_train,Y_train, X_test, Y_test)
+		accuracy, recall, f1, pred = self.__classify(X_train,Y_train, X_test, Y_test, minority_class)
 		results_print.append([0,accuracy, recall, f1])
 
+		np.savetxt('{}/pred.txt'.format(path), pred, fmt='%d')
 		np.savetxt('{}/results.txt'.format(path), results_print, fmt='%d,%.5f,%.5f,%.5f')
 
 	def __saveDataset(self, X_train,Y_train, pathDataset,ds_name):
@@ -55,7 +57,7 @@ class DS(object):
 		    else:
 		        score[conqs[i]]-=1
 
-	def major_negative(self, output, X, Y, path, majority_class, ds, f):
+	def major_negative(self, output, X, Y,  X_test, Y_test, path, majority_class, ds, f, minority_class):
 		#1st case: remove samples from majoritary class with negative scores        
 		output_majority = output[output[:,1]==majority_class]
 		output_majority_negative = output_majority[output_majority[:,2]<0]
@@ -63,10 +65,10 @@ class DS(object):
 		X_train = np.delete(X, output_majority_negative[:,0],0)
 		Y_train = np.delete(Y, output_majority_negative[:,0])
 		self.__saveDataset(X_train,Y_train, path,'major_negative')
-		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'major_negative')
+		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'major_negative', minority_class)
 
 
-	def major_neutral(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f):
+	def major_neutral(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f, minority_class):
 		#2st case: remove samples from majoritary class with negative or zero scores
 		output_majority = output[output[:,1]==majority_class]
 		output_majority_neutal = output_majority[output_majority[:,2]<=0]
@@ -74,18 +76,18 @@ class DS(object):
 		X_train = np.delete(X, output_majority_neutal[:,0],0)
 		Y_train = np.delete(Y, output_majority_neutal[:,0])
 		self.__saveDataset(X_train,Y_train, path,'major_neutral')
-		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'major_neutral')
+		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'major_neutral', minority_class)
 
-	def negative(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f):
+	def negative(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f, minority_class):
 		#3st case: remove all samples with negative
 		output_negatives = output[output[:,2]<0]
 
 		X_train = np.delete(X, output_negatives[:,0],0)
 		Y_train = np.delete(Y, output_negatives[:,0])
 		self.__saveDataset(X_train,Y_train, path,'negative')
-		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'negative')
+		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'negative', minority_class)
 
-	def negatives_major_zero(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f):
+	def negatives_major_zero(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f, minority_class):
 		#4st case: remove samples from majoritary class with negative or zero scores 
 		# and from minoritary class with negative scores
 		output_negatives = output[output[:,2]<0]
@@ -96,9 +98,9 @@ class DS(object):
 		X_train = np.delete(X, output_negatives_major_zero[:,0],0)
 		Y_train = np.delete(Y, output_negatives_major_zero[:,0])
 		self.__saveDataset(X_train,Y_train, path,'negatives_major_zero')
-		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'negatives_major_zero')
+		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'negatives_major_zero', minority_class)
 
-	def balance(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f):
+	def balance(self, output, X, Y, X_test, Y_test, path, majority_class, ds, f, minority_class):
 		#5st case: remove samples from majoritary class until balancing the dataset
 
 		# find the number of samples to remove
@@ -118,7 +120,7 @@ class DS(object):
 
 		# save new dataset and results
 		self.__saveDataset(X_train,Y_train, path,'balance')
-		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'balance')
+		self.__saveResults(X_train,Y_train, X_test, Y_test, ds,f, 'balance', minority_class)
 
 	def __runOPF(self, X_train,y_train,index_train,X_test,y_test,index_test, score):
 		# Creates a SupervisedOPF instance
