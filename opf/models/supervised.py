@@ -3,14 +3,15 @@ import time
 
 import numpy as np
 
-import opfython.math.general as g
-import opfython.math.random as r
-import opfython.utils.constants as c
-import opfython.utils.exception as e
-import opfython.utils.logging as l
-from opfython.core.heap import Heap
-from opfython.core.opf import OPF
-from opfython.core.subgraph import Subgraph
+import opf.math.general as g
+import opf.math.random as r
+import opf.utils.constants as c
+import opf.utils.exception as e
+import opf.utils.logging as l
+from opf.core.heap import Heap
+from opf.core.opf import OPF
+
+from opf.core.subgraph import Subgraph
 
 logger = l.get_logger(__name__)
 

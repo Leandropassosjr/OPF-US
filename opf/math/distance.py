@@ -1,6 +1,6 @@
 import numpy as np
 
-import opfython.utils.constants as c
+import opf.utils.constants as c
 
 
 def bray_curtis_distance(x, y):

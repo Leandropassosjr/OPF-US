@@ -2,13 +2,13 @@ import time
 
 import numpy as np
 
-import opfython.math.general as g
-import opfython.utils.constants as c
-import opfython.utils.exception as e
-import opfython.utils.logging as l
-from opfython.core.heap import Heap
-from opfython.core.opf import OPF
-from opfython.subgraphs.knn import KNNSubgraph
+import opf.math.general as g
+import opf.utils.constants as c
+import opf.utils.exception as e
+import opf.utils.logging as l
+from opf.core.heap import Heap
+from opf.core.opf import OPF
+from opf.subgraphs.knn import KNNSubgraph
 
 logger = l.get_logger(__name__)
 
