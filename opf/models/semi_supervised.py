@@ -2,13 +2,13 @@ import time
 
 import numpy as np
 
-import opfython.utils.constants as c
-import opfython.utils.exception as e
-import opfython.utils.logging as l
-from opfython.core.heap import Heap
-from opfython.core.node import Node
-from opfython.core.subgraph import Subgraph
-from opfython.models.supervised import SupervisedOPF
+import opf.utils.constants as c
+import opf.utils.exception as e
+import opf.utils.logging as l
+from opf.core.heap import Heap
+from opf.core.node import Node
+from opf.core.subgraph import Subgraph
+from opf.models.supervised import SupervisedOPF
 
 logger = l.get_logger(__name__)
 

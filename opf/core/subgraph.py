@@ -1,11 +1,11 @@
 import numpy as np
 
-import opfython.stream.loader as loader
-import opfython.stream.parser as p
-import opfython.utils.constants as c
-import opfython.utils.exception as e
-import opfython.utils.logging as l
-from opfython.core.node import Node
+import opf.stream.loader as loader
+import opf.stream.parser as p
+import opf.utils.constants as c
+import opf.utils.exception as e
+import opf.utils.logging as l
+from opf.core.node import Node
 
 logger = l.get_logger(__name__)
 

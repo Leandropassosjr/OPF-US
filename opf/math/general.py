@@ -1,7 +1,7 @@
 import numpy as np
 
-import opfython.math.distance as d
-import opfython.utils.logging as l
+import opf.math.distance as d
+import opf.utils.logging as l
 
 logger = l.get_logger(__name__)
 

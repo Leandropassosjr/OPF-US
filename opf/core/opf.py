@@ -2,13 +2,13 @@ import pickle
 
 import numpy as np
 
-import opfython.math.distance as d
-import opfython.stream.loader as loader
-import opfython.utils.constants as c
-import opfython.utils.exception as e
-import opfython.utils.logging as l
-from opfython.core.heap import Heap
-from opfython.core.subgraph import Subgraph
+import opf.math.distance as d
+import opf.stream.loader as loader
+import opf.utils.constants as c
+import opf.utils.exception as e
+import opf.utils.logging as l
+from opf.core.heap import Heap
+from opf.core.subgraph import Subgraph
 
 logger = l.get_logger(__name__)
 
