@@ -14,7 +14,7 @@ Created on Tue Jun  9 15:10:02 2020
 from undersampling.us import US
 import numpy as np
 
-class OpfUSBalance(US):
+class OpfUS(US):
     
     def variant(self, output, X, Y, majority_class, minority_class):
         #5st case: remove samples from majoritary class until balancing the dataset

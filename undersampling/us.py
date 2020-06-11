@@ -112,9 +112,9 @@ class US(metaclass=abc.ABCMeta):
         np.savetxt('{}/pred.txt'.format(path), pred, fmt='%d')
         np.savetxt('{}/results.txt'.format(path), results_print, fmt='%d,%.5f,%.5f,%.5f,%.5f')
 
-    def saveDataset(self, X_train,Y_train, pathDataset,ds_name):
+    def saveDataset(self, X_train,Y_train, pathDataset,approach):
         DS = np.insert(X_train,len(X_train[0]),Y_train , axis=1)
-        np.savetxt('{}/train_{}.txt'.format(pathDataset, ds_name),DS,  fmt='%.5f,'*(len(X_train[0]))+'%d')    
+        np.savetxt('{}/train_{}.txt'.format(pathDataset, approach),DS,  fmt='%.5f,'*(len(X_train[0]))+'%d')    
     
     @abc.abstractmethod
     def variant(self, output, X, Y,  majority_class, minority_class):
